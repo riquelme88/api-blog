@@ -1,0 +1,25 @@
+dados do post :
+- id
+- title
+- author
+- body
+- likes
+- userId
+- category
+- coments[
+    {
+        - id
+        - userId
+        - comment
+    }
+]
+
+dados do user : 
+
+- id
+- name
+- password 
+- email
+- posts[]
+- comments[]
+
