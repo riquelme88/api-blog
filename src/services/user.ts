@@ -1,6 +1,7 @@
 import { error } from "console"
 import user, { UserType } from "../models/user"
 import bcrypt from 'bcrypt'
+import { jsonWebSign } from "../midleware/jwt"
 
 
 export const findUserByEmail = async (email: string) => {
@@ -8,6 +9,23 @@ export const findUserByEmail = async (email: string) => {
     return userEmail
 }
 
+export const findUserByName = async (name: string) => {
+    const oneUser = await user.findOne({ name })
+    if (!oneUser) {
+        throw new Error('Not existing this user')
+    }
+
+    return oneUser
+}
+
+export const findUserByToken = async (token: string) => {
+    const userToken = await user.findOne({ token })
+    if (!userToken) {
+        throw new Error('No existing this user')
+    }
+
+    return userToken
+}
 
 export const addUser = async (data: UserType) => {
     const password = await bcrypt.hash(data.password, 10)
@@ -15,7 +33,8 @@ export const addUser = async (data: UserType) => {
     const newUser = user.create({
         email: data.email,
         name: data.name,
-        password
+        password,
+        token: data.token
     })
 
     if (!newUser) {

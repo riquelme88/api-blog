@@ -12,15 +12,15 @@ export const registerUser: RequestHandler = async (req, res) => {
     const hasUser = await findUserByEmail(safeData.data.email)
     if (hasUser) return res.status(400).json({ error: 'Usuario já existente' })
     try {
+        const token = jsonWebSign(safeData.data.email)
+
         const newUser = await addUser({
             email: safeData.data.email,
             name: safeData.data.name,
-            password: safeData.data.password
+            password: safeData.data.password,
+            token
         })
-
-        const token = jsonWebSign(safeData.data.email)
-
-        res.status(201).json({ data: newUser, token })
+        res.status(201).json({ data: newUser })
     } catch (error) {
         console.log(error)
         res.status(400).json({ error: "Ocorreu algum error" })
@@ -35,14 +35,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
     try {
         const user = await userLogin(safeData.data.email, safeData.data.password)
-        const token = jsonWebSign(safeData.data.email)
-        res.json({
-            data: {
-                userEmail: user.email,
-                userName: user.name,
-                token
-            }
-        })
+        res.json({ data: { userEmail: user.email, userName: user.name, token: user.token } })
     } catch (error) {
         console.log(error)
         res.status(400).json({ error: 'Email/senha incorreta' })

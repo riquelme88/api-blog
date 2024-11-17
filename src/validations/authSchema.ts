@@ -12,3 +12,7 @@ export const singinSchema = z.object({
     password: z.string({ message: 'Mande uma senha' }).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         { message: 'Senha deve conter uma letra minuscul, maiuscula, simbolo, numero e no minimo 8 caracteres' })
 })
+
+export const userSchema = z.object({
+    name: z.string({ message: 'Mande um nome' })
+})

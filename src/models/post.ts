@@ -4,7 +4,7 @@ export type PostsType = {
     title: string,
     author: string,
     body: string,
-    likes: number,
+    likes?: number,
     userId: Types.ObjectId,
     comments?: [{
         userId: Types.ObjectId,

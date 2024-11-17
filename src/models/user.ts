@@ -6,14 +6,16 @@ export type UserType = {
     password: string
     posts?: [{
         id: Types.ObjectId
-    }]
+    }],
+    token: string
 }
 
 const userSchema = new Schema<UserType>({
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
-    posts: [{ type: Schema.Types.ObjectId, ref: 'posts' }]
+    posts: [{ type: Schema.Types.ObjectId, ref: 'posts' }],
+    token: { type: String, required: true }
 })
 
 const modelUserName = "User"
