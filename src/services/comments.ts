@@ -40,3 +40,21 @@ export const removeComment = async (id: String, userId: string) => {
     return hasComment
 
 }
+
+export const updateComment = async (id: string, userId: string, commentText: string) => {
+    const comment = await comments.findOne({
+        _id: id, userId
+    })
+
+    if (!comment) {
+        throw new Error('Not found comment')
+    }
+
+    const commentUpdate = await comments.findByIdAndUpdate(comment.id, { comment: commentText }, { new: true })
+    if (!commentUpdate) {
+        throw new Error('It´s not possible comment')
+    }
+
+
+    return commentUpdate
+}

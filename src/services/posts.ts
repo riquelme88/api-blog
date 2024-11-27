@@ -2,7 +2,6 @@ import { Types } from "mongoose"
 import post, { PostsType } from "../models/post"
 import { findUserByName } from "./user"
 import user from "../models/user"
-import likes from "../models/likes"
 
 export const getPosts = async (page: number) => {
 
@@ -184,10 +183,10 @@ export const newPost = async (data: PostsType) => {
     return newPost
 }
 
-export const updatePost = async (userId: Types.ObjectId, title: string, body: string, titleBody: string) => {
-    const query = { title, userId }
+export const updatePost = async (userId: Types.ObjectId, id: string, body: string, titleBody: string) => {
+    const query = { _id: id, userId }
 
-    const postUpdate = await post.findOneAndUpdate(query, { body, title: titleBody })
+    const postUpdate = await post.findOneAndUpdate(query, { body, title: titleBody }, { new: true })
 
     if (!postUpdate) {
         throw new Error('not possible update this post')

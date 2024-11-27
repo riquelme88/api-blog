@@ -76,17 +76,17 @@ export const newPost = async (req: ExtendedRequest, res: Response) => {
 
 //Melhorar codigo de update dps!
 export const updatePost = async (req: ExtendedRequest, res: Response) => {
-    const safeData = updatePostSchema.safeParse(req.body)
-    const safeDataQuery = updateQueryPostSchema.safeParse(req.query)
+    const safeData = PostSchema.safeParse(req.params)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
-    if (!safeDataQuery.success) {
-        return res.status(400).json({ error: safeDataQuery.error.flatten().fieldErrors })
+    const safeDataBody = updatePostSchema.safeParse(req.body)
+    if (!safeDataBody.success) {
+        return res.status(400).json({ error: safeDataBody.error.flatten().fieldErrors })
     }
     try {
         const user = await findUserByEmail(req.userEmail)
-        const post = await postService.updatePost(user?.id, safeDataQuery.data?.title as string, safeData.data.body as string, safeData.data.titleBody as string)
+        const post = await postService.updatePost(user?.id, safeData.data.id, safeDataBody.data.body as string, safeDataBody.data.titleBody as string)
         res.status(202).json(post)
     } catch (error) {
         console.log(error)
@@ -171,5 +171,26 @@ export const removeComment = async (req: ExtendedRequest, res: Response) => {
         res.json({ comment })
     } catch (error) {
         res.status(400).json({ error: 'Ocorreu algum error' })
+    }
+}
+
+export const updateComment = async (req: ExtendedRequest, res: Response) => {
+    const safeData = commentIdSchema.safeParse(req.params)
+    const safeDataComment = commentSchema.safeParse(req.body)
+    if (!safeData.success) {
+        return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
+    }
+    if (!safeDataComment.success) {
+        return res.status(400).json({ error: safeDataComment.error.flatten().fieldErrors })
+    }
+
+    try {
+        const user = await findUserByEmail(req.userEmail)
+        const newComment = await commentsService.updateComment(safeData.data.id, user?.id, safeDataComment.data.comment)
+        res.json(newComment)
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: 'Não foi possivel atualizar o comentario' })
     }
 }
