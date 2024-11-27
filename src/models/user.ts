@@ -7,15 +7,17 @@ export type UserType = {
     posts?: [{
         id: Types.ObjectId
     }],
-    token: string
+    token: string,
+    likes?: [Types.ObjectId]
 }
 
 const userSchema = new Schema<UserType>({
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
-    posts: [{ type: Schema.Types.ObjectId, ref: 'posts' }],
-    token: { type: String, required: true }
+    posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    token: { type: String, required: true },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }]
 })
 
 const modelUserName = "User"

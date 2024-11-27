@@ -5,7 +5,7 @@ import { jsonWebSign } from "../midleware/jwt"
 
 
 export const findUserByEmail = async (email: string) => {
-    const userEmail = await user.findOne({ email })
+    const userEmail = await user.findOne({ email }).populate('posts')
     return userEmail
 }
 

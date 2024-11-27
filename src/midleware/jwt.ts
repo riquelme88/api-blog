@@ -14,13 +14,13 @@ export const midleware = (req: ExtendedRequest, res: Response, next: NextFunctio
 
     jwt.verify(token, process.env.SECRET_KEY as string,
         async (error, decoded: any) => {
-            console.log(error)
-            if (error) return res.status(401).json({ error: 'Token inválido' })
-
             const user = await findUserByToken(token)
             if (!user) return res.status(401).json({ error: 'Acesso negado' })
+            if (error) return res.status(401).json({ error: 'Token inválido' })
+
 
             req.userEmail = user.email
+
             next()
         }
     )

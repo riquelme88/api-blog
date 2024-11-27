@@ -1,27 +1,30 @@
 import { connection, Model, model, Schema, Types } from "mongoose"
+import comments from "./comments"
 
 export type PostsType = {
     title: string,
     author: string,
     body: string,
-    likes?: number,
-    userId: Types.ObjectId,
-    comments?: [{
-        userId: Types.ObjectId,
-        comment: string
-    }]
+    userId: String,
+    comments?: [Types.ObjectId],
+    likes?: [Types.ObjectId],
+    category: string
 }
 
 const postSchema = new Schema<PostsType>({
     title: { type: String, required: true },
     author: { type: String, ref: 'User', required: true },
     body: { type: String, required: true },
-    likes: { type: Number, default: 0 },
-    userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    userId: { type: String, required: true, ref: 'User' },
     comments: [{
-        userId: { type: Schema.Types.ObjectId, ref: 'User' },
-        comment: String
-    }]
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Like'
+    }],
+    category: String
 })
 
 const modelPostName = "Post"
