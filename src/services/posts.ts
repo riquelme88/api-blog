@@ -4,7 +4,6 @@ import { findUserByName } from "./user"
 import user from "../models/user"
 
 export const getPosts = async (page: number) => {
-
     const validPage = isNaN(page) || page < 1 ? 1 : page;
 
     const posts = await post.aggregate([
@@ -69,7 +68,7 @@ export const findPostsByCategory = async (category: string, page: number) => {
     const posts = await post.aggregate([
         { $match: { category } },
         {
-            $lookup: {
+            $lookup: { // pesquisar o comments
                 from: 'comments',
                 localField: 'comments',
                 foreignField: '_id',

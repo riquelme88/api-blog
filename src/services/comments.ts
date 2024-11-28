@@ -1,7 +1,5 @@
-import { Types } from "mongoose"
 import comments, { CommentsType } from "../models/comments"
 import post from "../models/post"
-import user from "../models/user"
 
 export const addComment = async (data: CommentsType) => {
     const comment = await comments.create({
@@ -42,19 +40,12 @@ export const removeComment = async (id: String, userId: string) => {
 }
 
 export const updateComment = async (id: string, userId: string, commentText: string) => {
-    const comment = await comments.findOne({
-        _id: id, userId
-    })
+    const query = { _id: id, userId }
+
+    const comment = await comments.findOneAndUpdate(query, { comment: commentText }, { new: true })
 
     if (!comment) {
         throw new Error('Not found comment')
     }
-
-    const commentUpdate = await comments.findByIdAndUpdate(comment.id, { comment: commentText }, { new: true })
-    if (!commentUpdate) {
-        throw new Error('It´s not possible comment')
-    }
-
-
-    return commentUpdate
+    return comment
 }

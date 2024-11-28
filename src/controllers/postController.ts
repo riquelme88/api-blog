@@ -4,10 +4,9 @@ import * as likesService from '../services/likes'
 import * as commentsService from '../services/comments'
 import { ExtendedRequest } from "../types/extendedType";
 import { findUserByEmail } from "../services/user";
-import { categoryPostSchema, commentSchema, deletePostSchema, newPostSchema, PostSchema, updatePostSchema, updateQueryPostSchema } from "../validations/postSchema";
+import * as validationSchema from '../validations/postSchema'
 import { userSchema } from "../validations/authSchema";
 import { commentIdSchema } from "../validations/CommentSchema";
-import { Types } from "mongoose";
 
 
 export const getPosts = async (req: ExtendedRequest, res: Response) => {
@@ -39,13 +38,13 @@ export const getPostsUser = async (req: ExtendedRequest, res: Response) => {
 }
 
 export const getPostsCategory = async (req: Request, res: Response) => {
-    const safeData = categoryPostSchema.safeParse(req.query)
+    const safeData = validationSchema.categoryPostSchema.safeParse(req.query)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
 
     try {
-        const posts = await postService.findPostsByCategory(safeData.data.category)
+        const posts = await postService.findPostsByCategory(safeData.data.category, parseInt(safeData.data.page as string))
         res.json(posts)
     } catch (error) {
         res.status(400).json({ error: 'Não encontrou nenhum post' })
@@ -53,7 +52,7 @@ export const getPostsCategory = async (req: Request, res: Response) => {
 }
 
 export const newPost = async (req: ExtendedRequest, res: Response) => {
-    const safeData = newPostSchema.safeParse(req.body)
+    const safeData = validationSchema.newPostSchema.safeParse(req.body)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
@@ -74,13 +73,12 @@ export const newPost = async (req: ExtendedRequest, res: Response) => {
     }
 }
 
-//Melhorar codigo de update dps!
 export const updatePost = async (req: ExtendedRequest, res: Response) => {
-    const safeData = PostSchema.safeParse(req.params)
+    const safeData = validationSchema.PostSchema.safeParse(req.params)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
-    const safeDataBody = updatePostSchema.safeParse(req.body)
+    const safeDataBody = validationSchema.updatePostSchema.safeParse(req.body)
     if (!safeDataBody.success) {
         return res.status(400).json({ error: safeDataBody.error.flatten().fieldErrors })
     }
@@ -95,7 +93,7 @@ export const updatePost = async (req: ExtendedRequest, res: Response) => {
 }
 
 export const deletePost = async (req: ExtendedRequest, res: Response) => {
-    const safeData = deletePostSchema.safeParse(req.params)
+    const safeData = validationSchema.deletePostSchema.safeParse(req.params)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
@@ -111,7 +109,7 @@ export const deletePost = async (req: ExtendedRequest, res: Response) => {
 }
 
 export const toogleLikePost = async (req: ExtendedRequest, res: Response) => {
-    const safeData = PostSchema.safeParse(req.params)
+    const safeData = validationSchema.PostSchema.safeParse(req.params)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
@@ -133,8 +131,8 @@ export const toogleLikePost = async (req: ExtendedRequest, res: Response) => {
 }
 
 export const addComment = async (req: ExtendedRequest, res: Response) => {
-    const safeDataPost = PostSchema.safeParse(req.params)
-    const safeData = commentSchema.safeParse(req.body)
+    const safeDataPost = validationSchema.PostSchema.safeParse(req.params)
+    const safeData = validationSchema.commentSchema.safeParse(req.body)
     if (!safeDataPost.success) {
         return res.status(400).json({ error: safeDataPost.error.flatten().fieldErrors })
     }
@@ -176,7 +174,7 @@ export const removeComment = async (req: ExtendedRequest, res: Response) => {
 
 export const updateComment = async (req: ExtendedRequest, res: Response) => {
     const safeData = commentIdSchema.safeParse(req.params)
-    const safeDataComment = commentSchema.safeParse(req.body)
+    const safeDataComment = validationSchema.commentSchema.safeParse(req.body)
     if (!safeData.success) {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }

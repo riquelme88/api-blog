@@ -12,15 +12,11 @@ export const checkIfPostLikedByUser = async (userId: Types.ObjectId, postId: str
     return liked ? true : false
 }
 export const likePost = async (userId: Types.ObjectId, postId: string, userName: string) => {
-    const like = await likes.create({
-        user: userId,
-        postId,
-        userName
-    })
-
+    const like = await likes.create({ user: userId, postId, userName })
     if (!like) {
         throw new Error('Unable to like post')
     }
+
     await post.findByIdAndUpdate(
         postId,
         { $push: { likes: like.id } },
@@ -39,10 +35,7 @@ export const likePost = async (userId: Types.ObjectId, postId: string, userName:
 }
 
 export const unlikePost = async (userId: Types.ObjectId, postId: string) => {
-    const hasLiked = await likes.findOneAndDelete({
-        user: userId,
-        postId
-    })
+    const hasLiked = await likes.findOneAndDelete({ user: userId, postId })
 
     if (!hasLiked) {
         throw new Error('Like not found');

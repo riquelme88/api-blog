@@ -1,6 +1,6 @@
 import { RequestHandler } from "express"
 import { singinSchema, singupSchema } from "../validations/authSchema"
-import { addUser, findUserByEmail, userLogin } from "../services/user"
+import * as userService from '../services/user'
 import { jsonWebSign } from "../midleware/jwt"
 
 export const registerUser: RequestHandler = async (req, res) => {
@@ -9,12 +9,12 @@ export const registerUser: RequestHandler = async (req, res) => {
         return res.status(400).json({ error: safeData.error.flatten().fieldErrors })
     }
 
-    const hasUser = await findUserByEmail(safeData.data.email)
+    const hasUser = await userService.findUserByEmail(safeData.data.email)
     if (hasUser) return res.status(400).json({ error: 'Usuario já existente' })
     try {
         const token = jsonWebSign(safeData.data.email)
 
-        const newUser = await addUser({
+        const newUser = await userService.addUser({
             email: safeData.data.email,
             name: safeData.data.name,
             password: safeData.data.password,
@@ -34,7 +34,7 @@ export const loginUser: RequestHandler = async (req, res) => {
     }
 
     try {
-        const user = await userLogin(safeData.data.email, safeData.data.password)
+        const user = await userService.userLogin(safeData.data.email, safeData.data.password)
         res.json({ data: { userEmail: user.email, userName: user.name, token: user.token } })
     } catch (error) {
         console.log(error)

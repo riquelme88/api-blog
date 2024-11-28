@@ -28,5 +28,6 @@ export const deletePostSchema = z.object({
 })
 
 export const categoryPostSchema = z.object({
-    category: z.string({ message: 'Mande a categoria' })
+    category: z.string({ message: 'Mande a categoria' }),
+    page: z.string().optional()
 })
